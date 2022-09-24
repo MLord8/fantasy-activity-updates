@@ -32,6 +32,12 @@ resource "azurerm_service_plan" "service_plan" {
   sku_name            = "F1"
 }
 
+resource "azurerm_communication_service" "ff_sms_messages" {
+  name                = "ff-sms-messages"
+  resource_group_name = azurerm_resource_group.resource_group.name
+  data_location       = "United States"
+}
+
 resource "azurerm_linux_function_app" "example" {
   name                = "ff-sms-updates"
   resource_group_name = azurerm_resource_group.resource_group.name
@@ -44,6 +50,7 @@ resource "azurerm_linux_function_app" "example" {
   app_settings = {
     "LEAGUE_ID" = var.league_id
     "SMS_NUMBER" = var.sms_number
+    "CONNECTION_STRING" = azurerm_communication_service.ff_sms_messages.primary_connection_string
   }
 
   site_config {}
