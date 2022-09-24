@@ -51,6 +51,8 @@ resource "azurerm_linux_function_app" "example" {
     "LEAGUE_ID" = var.league_id
     "SMS_NUMBER" = var.sms_number
     "CONNECTION_STRING" = azurerm_communication_service.ff_sms_messages.primary_connection_string
+    "SWID" = var.swid
+    "ESPN_S2" = var.espn_s2
   }
 
   site_config {}
