@@ -12,34 +12,41 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "resource_group" {
-  name = "ff-sms-updates-resource-group"
+  name     = "ff-email-updates-resource-group"
   location = var.region
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name = "ff_sms_updates_storage"
-  resource_group_name = azurerm_resource_group.resource_group.name
-  location = var.region
-  account_tier = "Standard"
+  name                     = "ffemailupdatesstorage"
+  resource_group_name      = azurerm_resource_group.resource_group.name
+  location                 = var.region
+  account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
+resource "azurerm_application_insights" "application_insights" {
+  name                = "ff-email-updates-application-insights"
+  location            = var.region
+  resource_group_name = azurerm_resource_group.resource_group.name
+  application_type    = "web"
+}
+
 resource "azurerm_service_plan" "service_plan" {
-  name                = "ff-sms-updates-service-plan"
+  name                = "ff-email-updates-service-plan"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = var.region
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = "B1"
 }
 
-resource "azurerm_communication_service" "ff_sms_messages" {
-  name                = "ff-sms-messages"
+resource "azurerm_communication_service" "ff_email_updates" {
+  name                = "ff-email-messages"
   resource_group_name = azurerm_resource_group.resource_group.name
   data_location       = "United States"
 }
 
-resource "azurerm_linux_function_app" "example" {
-  name                = "ff-sms-updates"
+resource "azurerm_linux_function_app" "ff_email_updates_app" {
+  name                = "ff-email-updates"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = var.region
 
@@ -48,12 +55,20 @@ resource "azurerm_linux_function_app" "example" {
   service_plan_id            = azurerm_service_plan.service_plan.id
 
   app_settings = {
-    "LEAGUE_ID" = var.league_id
-    "SMS_NUMBER" = var.sms_number
-    "CONNECTION_STRING" = azurerm_communication_service.ff_sms_messages.primary_connection_string
-    "SWID" = var.swid
-    "ESPN_S2" = var.espn_s2
+    LEAGUE_ID = var.league_id
+    EMAIL = var.email
+    EMAIL_DOMAIN = var.azure_email_domain
+    CONNECTION_STRING = azurerm_communication_service.ff_email_updates.primary_connection_string
+    SWID = var.swid
+    ESPN_S2 = var.espn_s2
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.application_insights.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.application_insights.connection_string
+    WEBSITE_RUN_FROM_PACKAGE = 1
   }
 
-  site_config {}
+  site_config {
+    application_stack {
+        python_version = "3.9"
+    }
+  }
 }

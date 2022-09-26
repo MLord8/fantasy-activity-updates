@@ -1,2 +1,11 @@
 *.tfvars
+plan.tf
+*.tfstate
+.terraform/*
+terraform.tfstate.backup
+.terraform.lock.hcl
+.terraform/
 
+.vscode
+local.settings.json
+__pycache__

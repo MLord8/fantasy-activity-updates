@@ -9,9 +9,9 @@ variable "league_id" {
   description = "ESPN League ID"
 }
 
-variable "sms_number" {
+variable "email" {
   type        = string
-  description = "SMS number to text"
+  description = "Email address to send to"
 }
 
 variable "interval" {
@@ -27,4 +27,9 @@ variable "swid" {
 variable "espn_s2" {
   type        = string
   description = "Token needed for ESPN auth"
+}
+
+variable "azure_email_domain" {
+  type        = string
+  description = "Azure email sender domain"
 }

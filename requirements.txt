@@ -1,1 +1,4 @@
 espn_api
+azure-functions
+azure-communication-email
+azure-communication-sms
