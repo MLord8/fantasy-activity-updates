@@ -36,7 +36,7 @@ resource "azurerm_service_plan" "service_plan" {
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = var.region
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = "S1"
 }
 
 resource "azurerm_communication_service" "ff_email_updates" {
@@ -57,10 +57,11 @@ resource "azurerm_linux_function_app" "ff_email_updates_app" {
   app_settings = {
     LEAGUE_ID = var.league_id
     EMAIL = var.email
-    EMAIL_DOMAIN = var.azure_email_domain
-    CONNECTION_STRING = azurerm_communication_service.ff_email_updates.primary_connection_string
     SWID = var.swid
     ESPN_S2 = var.espn_s2
+    INTERVAL = var.interval
+    EMAIL_DOMAIN = var.azure_email_domain
+    CONNECTION_STRING = azurerm_communication_service.ff_email_updates.primary_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.application_insights.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.application_insights.connection_string
     WEBSITE_RUN_FROM_PACKAGE = 1

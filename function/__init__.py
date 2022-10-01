@@ -8,6 +8,9 @@ import azure.functions as func
 
 logger = logging.Logger(__name__)
 logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 LEAGUE_ID = int(os.environ.get("LEAGUE_ID", "0"))
 SWID = os.environ.get("SWID")
@@ -29,6 +32,7 @@ def main(timer: func.TimerRequest) -> None:
     league = League(LEAGUE_ID, year=2022, espn_s2=ESPN_S2, swid=SWID)
     recent_activity = league.recent_activity()
 
+    logger.info(f"Looking for activity in the last {INTERVAL} minutes")
     all_actions = []
     now = datetime.now()
     activity_start = datetime.timestamp(now - timedelta(minutes=INTERVAL)) * 1000
@@ -45,9 +49,12 @@ def main(timer: func.TimerRequest) -> None:
     if all_actions:
         logger.info(f"Found {len(all_actions)} actions, sending email")
         email_client = EmailClient.from_connection_string(CONNECTION_STRING)
+
+        formatted_actions = '\n'.join(all_actions)
+        text = f"League updates for the last {INTERVAL} minutes:\n{formatted_actions}"
         content = EmailContent(
             subject="[AUTOMATED] Fantasy League Update",
-            plain_text="\n".join(all_actions),
+            plain_text=text
         )
 
         address = EmailAddress(email=EMAIL)

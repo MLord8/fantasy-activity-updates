@@ -46,7 +46,7 @@ terraform destroy
 #### Add an email domain to the communications resource
 Unfortunately there's not a way to connect an email domain to an Azure communications service terraform resource. See these instructions under "Provision Managed Domain" for adding an email domain to the created ff-email-messages communications service. https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/add-azure-managed-domains\
 
-Add the domain to `function.tfvars` in the `azure_email_domain` variable.\
+Add the domain to `function.tfvars` to a variable called `azure_email_domain`.\
 Remote the old terraform plan
 ```
 cd terraform
