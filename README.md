@@ -1,4 +1,4 @@
-# Fantasy Football SMS Updates
+# Fantasy Football Email Updates
 
 I wanted to build something small to learn a little about Terraform for Azure. This app creates an Azure Function (similar to AWS Lambda) and associated resources that will run every X minutes and check your ESPN fantasy football league for Recent Activity. If there is any activity in the specified interval, the function will send a configured email address a  message detailing the transactions.
 
