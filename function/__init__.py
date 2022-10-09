@@ -21,10 +21,11 @@ CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
 EMAIL_DOMAIN = os.environ.get("EMAIL_DOMAIN")
 
 ACTION_EMOJI_MAP = defaultdict(
-    lambda x: "\U0001f3c8", {
+    lambda: "\U0001f3c8", {
         "DROPPED": "\U0000274C",
         "WAIVER ADDED": "\U0001f4b8",
-        "FA ADDED": "\U0001F4DD"
+        "FA ADDED": "\U0001F4DD",
+        "TRADED": "\U0001F91D"
     })
 
 
@@ -41,9 +42,15 @@ def main(timer: func.TimerRequest) -> None:
         full_action = []
         if activity.date >= activity_start:
             for team, action, player, bid in activity.actions:
-                full_action.append(
-                    f"{ACTION_EMOJI_MAP[action]}{team.team_name} {action} {player.name}({player.position}, {player.proTeam}) for ${bid}\n"
-                )
+                print(team, action, player, bid)
+                if action == "WAIVER ADDED":
+                    full_action.append(
+                        f"{ACTION_EMOJI_MAP[action]}{team.team_name} {action} {player.name}({player.position}, {player.proTeam}) for ${bid}\n"
+                    )
+                else:
+                    full_action.append(
+                        f"{ACTION_EMOJI_MAP[action]}{team.team_name} {action} {player.name}({player.position}, {player.proTeam})\n"
+                    )
             all_actions.append("".join(full_action))
 
     if all_actions:
